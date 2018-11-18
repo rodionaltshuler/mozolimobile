@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+              android:layout_marginLeft="8dp"
+              android:layout_marginRight="8dp"
+              android:layout_marginTop="4dp"
+              android:padding="8dp"
+              android:background="@android:color/white"
+>
+
+    <ImageView
+            android:id="@+id/cover"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="4dp"
+            android:scaleType="fitXY"
+    />
+
+    <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp"
+    />
+    <TextView
+            android:id="@+id/description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="4"
+            android:ellipsize="end"
+            android:layout_marginBottom="4dp"
+    />
+
+    <Button
+            android:id="@+id/btnParticipate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Participate"
+            android:background="@drawable/button_bg"
+            android:textColor="@android:color/white"
+    />
+
+</LinearLayout>
