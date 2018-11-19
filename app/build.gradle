@@ -36,9 +36,15 @@ android {
             resValue "string", "com_auth0_client_id", keystoreProperties['com_auth0_client_id']
         }
         release {
+            resValue "string", "com_auth0_client_id", keystoreProperties['com_auth0_client_id']
             minifyEnabled false
         }
     }
+
+    lintOptions {
+        abortOnError false
+    }
+
 
 }
 
@@ -79,8 +85,8 @@ kotlin {
         }
         commonTest {
             dependencies {
-        		implementation 'org.jetbrains.kotlin:kotlin-test-common'
-        		implementation 'org.jetbrains.kotlin:kotlin-test-annotations-common'
+                implementation 'org.jetbrains.kotlin:kotlin-test-common'
+                implementation 'org.jetbrains.kotlin:kotlin-test-annotations-common'
             }
         }
         androidMain {

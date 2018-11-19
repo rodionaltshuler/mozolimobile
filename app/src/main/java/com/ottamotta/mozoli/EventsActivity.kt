@@ -1,5 +1,6 @@
 package com.ottamotta.mozoli
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -33,7 +34,6 @@ class EventsActivity : AppCompatActivity() {
             layoutManager = LinearLayoutManager(context)
             adapter = this@EventsActivity.adapter
         }
-
 
         GlobalScope.launch(Dispatchers.Main) {
             adapter.events = api.getEventsByCity("1").await()
@@ -74,6 +74,15 @@ class EventsActivity : AppCompatActivity() {
                 Picasso.get().load(imageUrl).into(itemView.cover)
                 itemView.description.setText(newEvent?.description)
                 itemView.title.setText(newEvent?.name)
+                field = newEvent
+                itemView.setOnClickListener(object : View.OnClickListener {
+                    override fun onClick(v: View?) {
+                        val i = Intent(v?.context, RatingActivity::class.java)
+                        i.putExtra(RatingActivity.EXTRA_EVENT_ID, newEvent?.id)
+                        i.putExtra(RatingActivity.EXTRA_EVENT_NAME, newEvent?.name)
+                        v?.context?.startActivity(i)
+                    }
+                })
             }
 
     }

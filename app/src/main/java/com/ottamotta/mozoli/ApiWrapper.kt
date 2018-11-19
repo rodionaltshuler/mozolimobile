@@ -7,6 +7,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 class ApiWrapper(serverUrl : String) {
 
@@ -27,9 +28,17 @@ class ApiWrapper(serverUrl : String) {
 
     fun getEventsByCity(cityId: String) = service.eventsByCity(cityId)
 
+    fun getRatingByEvent(eventId: String, gender: String? = null) = service.ratingByEvent(eventId, gender)
+
 }
 
 interface MozoliApiService {
+
+    @GET("api/user/")
+    fun getUserProfile() : Deferred<User>
+
+    @GET("api/rating/event/{eventId}")
+    fun ratingByEvent(@Path("eventId") eventId : String, @Query("gender") gender : String? = null) : Deferred<List<Rating>>
 
     @GET("api/event/city/{cityId}")
     fun eventsByCity(@Path("cityId") cityId : String) : Deferred<List<Event>>
