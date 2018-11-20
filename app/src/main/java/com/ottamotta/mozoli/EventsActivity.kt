@@ -8,13 +8,10 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.ottamotta.mozoli.config.ServerConfig
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_list.*
 import kotlinx.android.synthetic.main.event_list_item.view.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import sample.R
 
 
@@ -27,7 +24,8 @@ class EventsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list)
 
-        val api = ApiWrapper(ServerConfig.SERVER_URL)
+        val authModel = AuthModel(applicationContext)
+        val api = authModel.apiWrapper()
 
         adapter = EventsAdapter()
         with(recyclerView) {

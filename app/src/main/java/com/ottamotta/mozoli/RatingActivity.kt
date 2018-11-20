@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import com.ottamotta.mozoli.config.ServerConfig
 import kotlinx.android.synthetic.main.activity_list.*
 import kotlinx.android.synthetic.main.rating_list_item.view.*
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +18,7 @@ import java.text.DecimalFormat
 
 class RatingActivity : AppCompatActivity() {
 
-    private lateinit var adapter : RatingAdapter
+    private lateinit var adapter: RatingAdapter
 
     companion object {
         val EXTRA_EVENT_ID = "event_id"
@@ -30,13 +29,16 @@ class RatingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list)
 
-        val eventId = intent.extras?.getString(EXTRA_EVENT_ID)?:""
+        val authModel = AuthModel(applicationContext)
+        if (!authModel.isLoggedIn()) {
+            authModel.authenticate(this)
+        }
+
+        val api = authModel.apiWrapper()
+
+        val eventId = intent.extras?.getString(EXTRA_EVENT_ID) ?: ""
         title = intent.extras?.getString(EXTRA_EVENT_NAME)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        val api = ApiWrapper(ServerConfig.SERVER_URL)
-
-
 
         adapter = RatingAdapter()
         with(recyclerView) {
@@ -61,7 +63,6 @@ class RatingActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
-
 
     class RatingAdapter() : RecyclerView.Adapter<RatingViewHolder>() {
 
