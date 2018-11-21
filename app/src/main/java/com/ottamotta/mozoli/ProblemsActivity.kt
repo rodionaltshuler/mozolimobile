@@ -10,8 +10,10 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.activity_list.*
-import kotlinx.android.synthetic.main.rating_list_item.view.*
-import kotlinx.coroutines.*
+import kotlinx.android.synthetic.main.problem_list_item.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import sample.R
 
 
@@ -73,8 +75,7 @@ class ProblemsActivity : AppCompatActivity() {
 
 
         override fun onCreateViewHolder(viewGroup: ViewGroup, type: Int): ProblemViewHolder {
-            //TODO specify layout resource
-            val view = LayoutInflater.from(viewGroup.context).inflate(R.layout.rating_list_item, viewGroup, false);
+            val view = LayoutInflater.from(viewGroup.context).inflate(R.layout.problem_list_item, viewGroup, false);
             return ProblemViewHolder(view);
         }
 
@@ -93,10 +94,10 @@ class ProblemsActivity : AppCompatActivity() {
 
         var problem: Problem? = null
             set(newProblem) {
-                //TODO initialize viewholder
-                itemView.rank.text = newProblem?.name
-                itemView.userName.text = newProblem?.grade?.font
-                itemView.scores.text = newProblem?.requestingUserSolving?.points?.toString()
+                itemView.routeNumber.text = newProblem?.name
+                itemView.grade.text = newProblem?.grade?.font
+                val holdImageProvider = HoldImageProvider(itemView.context)
+                itemView.holdImage.setImageDrawable(holdImageProvider.getDrawable(newProblem?.holdsColor))
                 field = newProblem
             }
 
