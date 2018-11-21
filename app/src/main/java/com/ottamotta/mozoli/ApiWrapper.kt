@@ -34,7 +34,7 @@ class ApiWrapper(serverUrl : String, private val tokenProvider: () -> Deferred<C
                     val token = runBlocking { tokenProvider().await() }
                     token?.run {
                         Log.d(TAG, "Setting auth header " + this.idToken!!.slice(IntRange(0, 4)))
-                        newRequest.addHeader("Authorization", this.idToken!!)
+                        newRequest.addHeader("Authorization", "Bearer " + this.idToken!!)
                     }
 
 
@@ -55,6 +55,9 @@ class ApiWrapper(serverUrl : String, private val tokenProvider: () -> Deferred<C
 
     fun getRatingByEvent(eventId: String, gender: String? = null) = service.ratingByEvent(eventId, gender)
 
+    fun getProblemsForEvent(eventId: String) = service.problemsForEvent(eventId)
+
+    fun getProblemsForEventWithSolutions(eventId: String) = service.problemsForEventWithSolutions(eventId)
 
 }
 
@@ -69,10 +72,10 @@ interface MozoliApiService {
     @GET("api/event/city/{cityId}")
     fun eventsByCity(@Path("cityId") cityId : String) : Deferred<List<Event>>
 
-    @GET("api/event/{eventId}/withSolvingsForUser")
+    @GET("api/problem/event/{eventId}/withSolvingsForUser")
     fun problemsForEventWithSolutions(@Path("eventId") eventId : String) : Deferred<List<Problem>>
 
-    @GET("api//event/{eventId}/withoutSolving")
+    @GET("api/problem/event/{eventId}/withoutSolving")
     fun problemsForEvent(@Path("eventId") eventId : String) : Deferred<List<Problem>>
 
     @POST("api/solving/")

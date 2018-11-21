@@ -37,19 +37,23 @@ class AuthModel(private val context: Context) {
         ApiWrapper(ServerConfig.SERVER_URL) {
             GlobalScope.async { if (isLoggedIn()) getTokenIfLoggedIn() else null } }
 
-    fun authenticate(activity : Activity) {
+    fun authenticate(activity : Activity, actionAfterAuth: (() -> Unit)? = {}) {
+
         val account = Auth0(context.getString(R.string.com_auth0_client_id), context.getString(R.string.com_auth0_domain))
         account.isOIDCConformant = true
 
         GlobalScope.launch {
             try {
-                val credentials = awaitCallback<Credentials> {
-                    WebAuthProvider.init(account)
-                        .withAudience("https://${context.getString(R.string.com_auth0_domain)}/userinfo")
-                        .start(activity, it)
+                if (!isLoggedIn()) {
+                    val credentials = awaitCallback<Credentials> {
+                        WebAuthProvider.init(account)
+                            .withAudience("https://${context.getString(R.string.com_auth0_domain)}/userinfo")
+                            .start(activity, it)
+                    }
+                    Log.i(TAG, "Saving credentials " + credentials.accessToken)
+                    authManager.saveCredentials(credentials)
                 }
-                Log.i(TAG, "Saving credentials " + credentials.accessToken)
-                authManager.saveCredentials(credentials)
+                actionAfterAuth?.invoke()
             } catch(e : Exception) {
                 if (e.hasDialog()) {
                     (e as ExceptionWithDialog).dialog.show()

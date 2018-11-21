@@ -30,9 +30,7 @@ class RatingActivity : AppCompatActivity() {
         setContentView(R.layout.activity_list)
 
         val authModel = AuthModel(applicationContext)
-        if (!authModel.isLoggedIn()) {
-            authModel.authenticate(this)
-        }
+        authModel.authenticate(this)
 
         val api = authModel.apiWrapper()
 

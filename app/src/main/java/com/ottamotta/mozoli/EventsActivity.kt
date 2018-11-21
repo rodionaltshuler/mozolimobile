@@ -75,9 +75,9 @@ class EventsActivity : AppCompatActivity() {
                 field = newEvent
                 itemView.setOnClickListener(object : View.OnClickListener {
                     override fun onClick(v: View?) {
-                        val i = Intent(v?.context, RatingActivity::class.java)
-                        i.putExtra(RatingActivity.EXTRA_EVENT_ID, newEvent?.id)
-                        i.putExtra(RatingActivity.EXTRA_EVENT_NAME, newEvent?.name)
+                        val i = Intent(v?.context, ProblemsActivity::class.java)
+                        i.putExtra(ProblemsActivity.EXTRA_EVENT_ID, newEvent?.id)
+                        i.putExtra(ProblemsActivity.EXTRA_EVENT_NAME, newEvent?.name)
                         v?.context?.startActivity(i)
                     }
                 })

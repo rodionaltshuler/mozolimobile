@@ -20,6 +20,9 @@
         <activity android:name="com.ottamotta.mozoli.RatingActivity"
                   android:screenOrientation="portrait" />
 
+        <activity android:name="com.ottamotta.mozoli.ProblemsActivity"
+                  android:screenOrientation="portrait" />
+
 
     </application>
 
