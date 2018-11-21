@@ -3,8 +3,8 @@ package com.ottamotta.mozoli
 import android.app.Activity
 import android.app.Dialog
 import com.auth0.android.authentication.AuthenticationException
+import com.auth0.android.authentication.storage.CredentialsManager
 import com.auth0.android.authentication.storage.CredentialsManagerException
-import com.auth0.android.authentication.storage.SecureCredentialsManager
 import com.auth0.android.callback.BaseCallback
 import com.auth0.android.provider.AuthCallback
 import com.auth0.android.provider.WebAuthProvider
@@ -28,7 +28,7 @@ suspend fun <T> awaitCallback(block: (Callback<T>) -> Unit) : T =
         })
     }
 
-fun SecureCredentialsManager.getCredentials(callback : Callback<Credentials>) {
+fun CredentialsManager.getCredentials(callback : Callback<Credentials>) {
     getCredentials(object : BaseCallback<Credentials, CredentialsManagerException> {
         override fun onFailure(error: CredentialsManagerException?) {
             callback.onException(error)
