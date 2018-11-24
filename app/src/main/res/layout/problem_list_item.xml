@@ -27,10 +27,17 @@
         <TextView
                 android:id="@+id/grade"
                 android:layout_marginLeft="8dp"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
                 android:textStyle="bold"
+        />
+
+        <TextView
+                android:id="@+id/result"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
         />
 
 

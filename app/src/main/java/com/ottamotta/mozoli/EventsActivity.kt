@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,16 +26,18 @@ class EventsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_list)
 
         val authModel = AuthModel(applicationContext)
-        val api = authModel.apiWrapper()
+        authModel.authenticate(this) {
+            GlobalScope.launch(Dispatchers.Main) {
+                val api = authModel.apiWrapper()
 
-        adapter = EventsAdapter()
-        with(recyclerView) {
-            layoutManager = LinearLayoutManager(context)
-            adapter = this@EventsActivity.adapter
-        }
+                adapter = EventsAdapter()
+                with(recyclerView) {
+                    layoutManager = LinearLayoutManager(context)
+                    adapter = this@EventsActivity.adapter
+                }
 
-        GlobalScope.launch(Dispatchers.Main) {
-            adapter.events = api.getEventsByCity("1").await()
+                adapter.events = (api getEventsByCity "1").await()
+            }
         }
 
     }

@@ -21,6 +21,9 @@ class ProblemsActivity : AppCompatActivity() {
 
     private val TAG = ProblemsActivity::class.java.simpleName
 
+    private lateinit var authModel: AuthModel
+    private lateinit var eventId : String
+
     companion object {
         val EXTRA_EVENT_ID = "event_id"
         val EXTRA_EVENT_NAME = "event_name"
@@ -33,23 +36,29 @@ class ProblemsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_list)
 
 
-        val eventId = intent.extras?.getString(EXTRA_EVENT_ID) ?: ""
+        eventId = intent.extras?.getString(EXTRA_EVENT_ID) ?: ""
         title = intent.extras?.getString(EXTRA_EVENT_NAME)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
 
-        val authModel = AuthModel(applicationContext)
+        adapter = ProblemsAdapter{ loadData() }
+
+        with(recyclerView) {
+            layoutManager = LinearLayoutManager(context)
+            adapter = this@ProblemsActivity.adapter
+        }
+
+        authModel = AuthModel(applicationContext)
+
+        loadData()
+    }
+
+    private fun loadData() {
         authModel.authenticate(this) {
             GlobalScope.launch(Dispatchers.Main) {
                 Log.d(TAG, "Authenticated - launching post-auth code")
                 val api = authModel.apiWrapper()
-
-                adapter = ProblemsAdapter()
-                with(recyclerView) {
-                    layoutManager = LinearLayoutManager(context)
-                    adapter = this@ProblemsActivity.adapter
-                }
-
+                adapter.items = ArrayList()
                 adapter.items = api.getProblemsForEventWithSolutions(eventId).await()
             }
         }
@@ -65,7 +74,7 @@ class ProblemsActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    class ProblemsAdapter() : RecyclerView.Adapter<ProblemViewHolder>() {
+    class ProblemsAdapter(private val refreshAction: () -> Unit) : RecyclerView.Adapter<ProblemViewHolder>() {
 
         var items: List<Problem> = ArrayList()
             set(value) {
@@ -76,7 +85,7 @@ class ProblemsActivity : AppCompatActivity() {
 
         override fun onCreateViewHolder(viewGroup: ViewGroup, type: Int): ProblemViewHolder {
             val view = LayoutInflater.from(viewGroup.context).inflate(R.layout.problem_list_item, viewGroup, false);
-            return ProblemViewHolder(view);
+            return ProblemViewHolder(view, refreshAction);
         }
 
         override fun getItemCount(): Int {
@@ -87,18 +96,47 @@ class ProblemsActivity : AppCompatActivity() {
             viewHolder.problem = items[position]
         }
 
+        override fun getItemId(position: Int): Long {
+            return items[position].name!!.toLong()
+        }
 
+        override fun onViewRecycled(holder: ProblemViewHolder) {
+            super.onViewRecycled(holder)
+            holder.itemView.holdImage.setImageDrawable(null)
+        }
     }
 
-    class ProblemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ProblemViewHolder(itemView: View, private val refreshAction: () -> Unit) : RecyclerView.ViewHolder(itemView) {
 
-        var problem: Problem? = null
+        var problem: Problem = Problem()
             set(newProblem) {
-                itemView.routeNumber.text = newProblem?.name
-                itemView.grade.text = newProblem?.grade?.font
+                field = newProblem
+                itemView.routeNumber.text = newProblem.name
+                itemView.grade.text = newProblem.grade?.font
                 val holdImageProvider = HoldImageProvider(itemView.context)
                 itemView.holdImage.setImageDrawable(holdImageProvider.getDrawable(newProblem?.holdsColor))
-                field = newProblem
+                val result = newProblem.requestingUserSolving?.points
+                val solved = result != null && result > 0
+                if (solved) {
+                    itemView.result.text = "Solved!"
+                } else {
+                    itemView.result.text = null
+                }
+                itemView onClick {
+                    GlobalScope.launch (Dispatchers.Main) {
+                        try {
+                            val requestBody = newProblem.solutionToSubmit()
+                            Log.i("ProblemViewHolder", "Request body: $requestBody")
+                            val solution = AuthModel(itemView.context).apiWrapper().solve(
+                                requestBody
+                            ).await()
+                            Log.i("ProblemViewHolder", solution.toString())
+                            refreshAction()
+                        } catch (e : Exception) {
+                            Log.e("ProblemViewHolder", e.message)
+                        }
+                    }
+                }
             }
 
     }

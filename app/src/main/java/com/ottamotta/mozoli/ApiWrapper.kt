@@ -2,6 +2,7 @@ package com.ottamotta.mozoli
 import android.util.Log
 import com.auth0.android.result.Credentials
 import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import kotlinx.coroutines.*
@@ -20,7 +21,11 @@ class ApiWrapper(serverUrl : String, private val tokenProvider: () -> Deferred<C
 
     init {
         val mapper = ObjectMapper()
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        with (mapper) {
+            configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            //disable(MapperFeature.AUTO_DETECT_IS_GETTERS)
+        }
+
         val converterFactory : JacksonConverterFactory = JacksonConverterFactory.create(mapper)
 
         val httpClient = OkHttpClient()
@@ -51,7 +56,7 @@ class ApiWrapper(serverUrl : String, private val tokenProvider: () -> Deferred<C
         service = retrofit.create(MozoliApiService::class.java)
     }
 
-    fun getEventsByCity(cityId: String) = service.eventsByCity(cityId)
+    infix fun getEventsByCity(cityId: String) = service.eventsByCity(cityId)
 
     fun getRatingByEvent(eventId: String, gender: String? = null) = service.ratingByEvent(eventId, gender)
 
@@ -59,26 +64,28 @@ class ApiWrapper(serverUrl : String, private val tokenProvider: () -> Deferred<C
 
     fun getProblemsForEventWithSolutions(eventId: String) = service.problemsForEventWithSolutions(eventId)
 
+    infix fun solve(solution: Solution) = service.submitSolution(solution)
+
 }
 
 interface MozoliApiService {
 
-    @GET("api/user/")
+    @GET("user/")
     fun getUserProfile() : Deferred<User>
 
-    @GET("api/rating/event/{eventId}")
-    fun ratingByEvent(@Path("eventId") eventId : String, @Query("gender") gender : String? = null) : Deferred<List<Rating>>
+    @GET("rating/event/{eventId}")
+    fun ratingByEvent(@Path("eventId") eventId : String, @Query("gender") gender : String? = null) : Deferred<Ratings>
 
-    @GET("api/event/city/{cityId}")
-    fun eventsByCity(@Path("cityId") cityId : String) : Deferred<List<Event>>
+    @GET("event/city/{cityId}")
+    fun eventsByCity(@Path("cityId") cityId : String) : Deferred<Events>
 
-    @GET("api/problem/event/{eventId}/withSolvingsForUser")
-    fun problemsForEventWithSolutions(@Path("eventId") eventId : String) : Deferred<List<Problem>>
+    @GET("problem/event/{eventId}/withSolvingsForUser")
+    fun problemsForEventWithSolutions(@Path("eventId") eventId : String) : Deferred<Problems>
 
-    @GET("api/problem/event/{eventId}/withoutSolving")
-    fun problemsForEvent(@Path("eventId") eventId : String) : Deferred<List<Problem>>
+    @GET("problem/event/{eventId}/withoutSolving")
+    fun problemsForEvent(@Path("eventId") eventId : String) : Deferred<Problems>
 
-    @POST("api/solving/")
+    @POST("solving/")
     fun submitSolution(@Body solution : Solution) : Deferred<Solution>
 
 }

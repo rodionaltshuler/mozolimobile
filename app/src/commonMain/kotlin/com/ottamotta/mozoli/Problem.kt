@@ -26,6 +26,17 @@ class Problem {
     val gymId: String? = null
     val sector: Sector? = null
     val createdDate: String? = null
+
+    fun solutionToSubmit(isFlash: Boolean = true, isRedpoint: Boolean = false, attempts: Int? = null): Solution {
+        val solution = this.requestingUserSolving ?: Solution()
+        return solution.apply {
+            this.problemId = this@Problem.id
+            this.isFlash = isFlash
+            this.isRedpoint = isRedpoint
+            this.attemptsNumber = attempts
+        }
+    }
+
 }
 
 class Grade {
@@ -44,7 +55,7 @@ class Grade {
 
 
 class Sector {
-    val id : String? = null
+    val id: String? = null
     val name: String? = null
     val gymId: String? = null
     val isActive: Boolean? = null
