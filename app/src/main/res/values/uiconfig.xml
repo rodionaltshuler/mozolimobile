@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="problem_grid_columns">4</integer>
+    <dimen name="problem_circle_diameter">54dp</dimen>
+    <dimen name="problem_outer_circle_diameter">73dp</dimen>
+    <dimen name="problem_layout_size">88dp</dimen>
+</resources>

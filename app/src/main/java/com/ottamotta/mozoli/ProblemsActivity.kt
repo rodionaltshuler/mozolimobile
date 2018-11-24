@@ -2,7 +2,7 @@ package com.ottamotta.mozoli
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
@@ -44,7 +44,7 @@ class ProblemsActivity : AppCompatActivity() {
         adapter = ProblemsAdapter{ loadData() }
 
         with(recyclerView) {
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = GridLayoutManager(context, this.resources.getInteger(R.integer.problem_grid_columns))
             adapter = this@ProblemsActivity.adapter
         }
 
@@ -100,10 +100,6 @@ class ProblemsActivity : AppCompatActivity() {
             return items[position].name!!.toLong()
         }
 
-        override fun onViewRecycled(holder: ProblemViewHolder) {
-            super.onViewRecycled(holder)
-            holder.itemView.holdImage.setImageDrawable(null)
-        }
     }
 
     class ProblemViewHolder(itemView: View, private val refreshAction: () -> Unit) : RecyclerView.ViewHolder(itemView) {
@@ -112,15 +108,14 @@ class ProblemsActivity : AppCompatActivity() {
             set(newProblem) {
                 field = newProblem
                 itemView.routeNumber.text = newProblem.name
-                itemView.grade.text = newProblem.grade?.font
-                val holdImageProvider = HoldImageProvider(itemView.context)
-                itemView.holdImage.setImageDrawable(holdImageProvider.getDrawable(newProblem?.holdsColor))
+                itemView.gradeImage.setColorFilter(Colors.colorByName(newProblem.stickerColor))
+
                 val result = newProblem.requestingUserSolving?.points
                 val solved = result != null && result > 0
                 if (solved) {
-                    itemView.result.text = "Solved!"
+                    itemView.solvedImage.visibility = View.VISIBLE
                 } else {
-                    itemView.result.text = null
+                    itemView.solvedImage.visibility = View.GONE
                 }
                 itemView onClick {
                     GlobalScope.launch (Dispatchers.Main) {

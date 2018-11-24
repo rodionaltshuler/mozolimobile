@@ -1,51 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="76dp">
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="@dimen/problem_layout_size"
+        android:layout_height="@dimen/problem_layout_size"
+        android:layout_margin="8dp">
 
-    <LinearLayout android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:orientation="horizontal"
-                  android:padding="12dp"
-                  android:gravity="center_vertical"
-    >
-
-        <TextView
-                android:id="@+id/routeNumber"
-                android:layout_width="36dp"
-                android:layout_height="wrap_content"
-                android:maxLines="1"
-                android:textSize="18sp"
-        />
-
-        <ImageView
-                android:id="@+id/holdImage"
-                android:layout_width="52dp"
-                android:layout_height="52dp"
-        />
-
-        <TextView
-                android:id="@+id/grade"
-                android:layout_marginLeft="8dp"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:textStyle="bold"
-        />
-
-        <TextView
-                android:id="@+id/result"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-        />
-
-
-    </LinearLayout>
-
-    <View android:layout_width="match_parent" android:layout_height="1px"
-          android:layout_gravity="bottom"
-          android:background="@android:color/darker_gray"
+    <ImageView
+            android:id="@+id/gradeImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/problem_outer_circle_bg"
+            android:layout_centerInParent="true"
     />
 
-</FrameLayout>
+    <TextView
+            android:id="@+id/routeNumber"
+            android:layout_width="36dp"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:textSize="30dp"
+            android:layout_centerInParent="true"
+            android:text="42"
+            android:textAlignment="center"
+            android:textColor="@android:color/widget_edittext_dark"
+            android:textStyle="bold"
+    />
+
+    <ImageView
+            android:id="@+id/solvedImage"
+            android:layout_width="@dimen/problem_circle_diameter"
+            android:layout_height="@dimen/problem_circle_diameter"
+            android:src="@drawable/icon_ok"
+            android:layout_centerInParent="true"
+            android:alpha="0.5"
+            android:visibility="gone"
+    />
+
+</RelativeLayout>
