@@ -37,6 +37,29 @@ class Problem {
         }
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as Problem
+
+        if (id != other.id) return false
+        if (likesNumber != other.likesNumber) return false
+        if (isRequestingUserLikeIt != other.isRequestingUserLikeIt) return false
+        if (requestingUserSolving != other.requestingUserSolving) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = id?.hashCode() ?: 0
+        result = 31 * result + (likesNumber ?: 0)
+        result = 31 * result + isRequestingUserLikeIt.hashCode()
+        result = 31 * result + (requestingUserSolving?.hashCode() ?: 0)
+        return result
+    }
+
+
 }
 
 class Grade {

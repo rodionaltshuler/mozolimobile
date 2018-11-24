@@ -2,8 +2,10 @@ package com.ottamotta.mozoli
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.util.SortedList
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.util.SortedListAdapterCallback
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -58,8 +60,7 @@ class ProblemsActivity : AppCompatActivity() {
             GlobalScope.launch(Dispatchers.Main) {
                 Log.d(TAG, "Authenticated - launching post-auth code")
                 val api = authModel.apiWrapper()
-                adapter.items = ArrayList()
-                adapter.items = api.getProblemsForEventWithSolutions(eventId).await()
+                adapter.setItems(api.getProblemsForEventWithSolutions(eventId).await())
             }
         }
     }
@@ -76,12 +77,27 @@ class ProblemsActivity : AppCompatActivity() {
 
     class ProblemsAdapter(private val refreshAction: () -> Unit) : RecyclerView.Adapter<ProblemViewHolder>() {
 
-        var items: List<Problem> = ArrayList()
-            set(value) {
-                field = value.sortedBy { it.name?.toInt() }
-                notifyDataSetChanged()
+        private val adapterCallback = object : SortedListAdapterCallback<Problem>(this) {
+            override fun compare(o1: Problem, o2: Problem): Int {
+                return o1.name?.toInt()?.compareTo(o2.name?.toInt()?:0)?:0
             }
 
+            override fun areContentsTheSame(oldItem: Problem, newItem: Problem): Boolean {
+                return oldItem == newItem
+            }
+
+            override fun areItemsTheSame(item1: Problem, item2: Problem): Boolean {
+                return true
+            }
+        }
+
+        private val items = SortedList(Problem::class.java, adapterCallback)
+
+        fun setItems(items : Problems) {
+            with (this.items) {
+                replaceAll(items)
+            }
+        }
 
         override fun onCreateViewHolder(viewGroup: ViewGroup, type: Int): ProblemViewHolder {
             val view = LayoutInflater.from(viewGroup.context).inflate(R.layout.problem_list_item, viewGroup, false);
@@ -89,7 +105,7 @@ class ProblemsActivity : AppCompatActivity() {
         }
 
         override fun getItemCount(): Int {
-            return items.size
+            return items.size()
         }
 
         override fun onBindViewHolder(viewHolder: ProblemViewHolder, position: Int) {
