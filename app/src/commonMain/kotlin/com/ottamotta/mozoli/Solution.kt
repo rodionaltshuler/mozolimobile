@@ -1,12 +1,18 @@
 package com.ottamotta.mozoli
 
-class Solution  {
-    val id : String? = null
-    val isFlash: Boolean? = null
-    val isRedpoint: Boolean? = null
-    val attemptsNumber: Int? = null
+import kotlin.jvm.JvmName
+
+class Solution(var problemId: String? = null) {
+    var isFlash: Boolean = false
+        @JvmName("getIsFlash")
+        get() = field
+    val id: String? = null
+    var isRedpoint: Boolean? = null
+        @JvmName("getIsRedpoint")
+        get() = field
+    var attemptsNumber: Int? = null
     val points: Int? = null
-    val problemId: String? = null
     val userId: String? = null
     val solvedDate: String? = null
+
 }
