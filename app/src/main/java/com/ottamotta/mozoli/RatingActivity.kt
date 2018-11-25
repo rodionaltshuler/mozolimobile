@@ -29,7 +29,7 @@ class RatingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list)
 
-        val authModel = AuthModel(applicationContext)
+        val authModel = MozoliModel(applicationContext)
         authModel.authenticate(this)
 
         val api = authModel.apiWrapper()

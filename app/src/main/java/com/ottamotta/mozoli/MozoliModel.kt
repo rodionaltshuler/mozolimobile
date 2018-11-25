@@ -15,9 +15,9 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import sample.R
 
-class AuthModel(private val context: Context) {
+class MozoliModel(private val context: Context) {
 
-    private val TAG = AuthModel::class.java.simpleName
+    private val TAG = MozoliModel::class.java.simpleName
 
     private val authManager: CredentialsManager
 

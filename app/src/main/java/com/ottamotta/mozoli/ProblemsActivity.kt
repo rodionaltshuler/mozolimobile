@@ -22,7 +22,7 @@ class ProblemsActivity : AppCompatActivity() {
 
     private val TAG = ProblemsActivity::class.java.simpleName
 
-    private lateinit var authModel: AuthModel
+    private lateinit var mozoliModel: MozoliModel
     private lateinit var eventId: String
 
     companion object {
@@ -49,16 +49,16 @@ class ProblemsActivity : AppCompatActivity() {
             adapter = this@ProblemsActivity.adapter
         }
 
-        authModel = AuthModel(applicationContext)
+        mozoliModel = MozoliModel(applicationContext)
 
         loadData()
     }
 
     private fun loadData() {
-        authModel.authenticate(this) {
+        mozoliModel.authenticate(this) {
             GlobalScope.launch(Dispatchers.Main) {
                 Log.d(TAG, "Authenticated - launching post-auth code")
-                val api = authModel.apiWrapper()
+                val api = mozoliModel.apiWrapper()
                 adapter.setItems(api.getProblemsForEventWithSolutions(eventId).await())
             }
         }
@@ -138,7 +138,7 @@ class ProblemsActivity : AppCompatActivity() {
                             }
                             itemView.solvedImage visibleIf requestBody.solved()
                             problem.requestingUserSolving =
-                                    AuthModel(itemView.context).apiWrapper().solve(requestBody).await()
+                                    MozoliModel(itemView.context).apiWrapper().solve(requestBody).await()
                             updateItemAction(problem)
                         } catch (e: Exception) {
                             Log.e("ProblemViewHolder", e.message)

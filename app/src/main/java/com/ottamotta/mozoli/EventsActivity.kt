@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,7 +24,7 @@ class EventsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list)
 
-        val authModel = AuthModel(applicationContext)
+        val authModel = MozoliModel(applicationContext)
         authModel.authenticate(this) {
             GlobalScope.launch(Dispatchers.Main) {
                 val api = authModel.apiWrapper()
