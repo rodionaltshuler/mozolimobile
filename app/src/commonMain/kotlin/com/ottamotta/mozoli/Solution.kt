@@ -1,6 +1,5 @@
 package com.ottamotta.mozoli
 
-import kotlin.jvm.JvmField
 import kotlin.jvm.JvmName
 
 class Solution(var problemId: String? = null) {
@@ -8,7 +7,7 @@ class Solution(var problemId: String? = null) {
         @JvmName("getIsFlash")
         get() = field
     val id: String? = null
-    var isRedpoint: Boolean? = null
+    var isRedpoint: Boolean = false
         @JvmName("getIsRedpoint")
         get() = field
     var attemptsNumber: Int? = null
@@ -16,6 +15,8 @@ class Solution(var problemId: String? = null) {
     val userId: String? = null
     val solvedDate: String? = null
 
+
+    fun solved() = isFlash || isRedpoint
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

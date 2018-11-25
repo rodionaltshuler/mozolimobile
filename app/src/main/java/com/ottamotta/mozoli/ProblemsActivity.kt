@@ -2,10 +2,8 @@ package com.ottamotta.mozoli
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.util.SortedList
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.util.SortedListAdapterCallback
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -17,6 +15,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import sample.R
+import java.util.*
 
 
 class ProblemsActivity : AppCompatActivity() {
@@ -24,7 +23,7 @@ class ProblemsActivity : AppCompatActivity() {
     private val TAG = ProblemsActivity::class.java.simpleName
 
     private lateinit var authModel: AuthModel
-    private lateinit var eventId : String
+    private lateinit var eventId: String
 
     companion object {
         val EXTRA_EVENT_ID = "event_id"
@@ -43,7 +42,7 @@ class ProblemsActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
 
-        adapter = ProblemsAdapter{ loadData() }
+        adapter = ProblemsAdapter()
 
         with(recyclerView) {
             layoutManager = GridLayoutManager(context, this.resources.getInteger(R.integer.problem_grid_columns))
@@ -75,37 +74,37 @@ class ProblemsActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    class ProblemsAdapter(private val refreshAction: () -> Unit) : RecyclerView.Adapter<ProblemViewHolder>() {
+    class ProblemsAdapter : RecyclerView.Adapter<ProblemViewHolder>() {
 
-        private val adapterCallback = object : SortedListAdapterCallback<Problem>(this) {
-            override fun compare(o1: Problem, o2: Problem): Int {
-                return o1.name?.toInt()?.compareTo(o2.name?.toInt()?:0)?:0
-            }
+        private val items: MutableList<Problem> = ArrayList()
 
-            override fun areContentsTheSame(oldItem: Problem, newItem: Problem): Boolean {
-                return oldItem == newItem
-            }
+        private val updateItemAction = { p: Problem -> updateItem(p) }
 
-            override fun areItemsTheSame(item1: Problem, item2: Problem): Boolean {
-                return true
+        fun setItems(items: Problems) {
+            with(this.items) {
+                clear()
+                notifyItemRangeRemoved(0, size)
+                addAll(items.sortedBy{it.name.toInt()})
             }
+            notifyItemRangeInserted(0, items.size)
         }
 
-        private val items = SortedList(Problem::class.java, adapterCallback)
-
-        fun setItems(items : Problems) {
-            with (this.items) {
-                replaceAll(items)
+        fun updateItem(item: Problem, position: Int = -1) {
+            val positionToUpdate = when (position < 0) {
+                true -> items.indexOfFirst { p -> p.name == item.name }
+                else -> position
             }
+            items[positionToUpdate] = item
+            notifyItemChanged(positionToUpdate)
         }
 
         override fun onCreateViewHolder(viewGroup: ViewGroup, type: Int): ProblemViewHolder {
             val view = LayoutInflater.from(viewGroup.context).inflate(R.layout.problem_list_item, viewGroup, false);
-            return ProblemViewHolder(view, refreshAction);
+            return ProblemViewHolder(view, updateItemAction)
         }
 
         override fun getItemCount(): Int {
-            return items.size()
+            return items.size
         }
 
         override fun onBindViewHolder(viewHolder: ProblemViewHolder, position: Int) {
@@ -118,7 +117,8 @@ class ProblemsActivity : AppCompatActivity() {
 
     }
 
-    class ProblemViewHolder(itemView: View, private val refreshAction: () -> Unit) : RecyclerView.ViewHolder(itemView) {
+    class ProblemViewHolder(itemView: View, private val updateItemAction: (Problem) -> Unit) :
+        RecyclerView.ViewHolder(itemView) {
 
         var problem: Problem = Problem()
             set(newProblem) {
@@ -128,22 +128,19 @@ class ProblemsActivity : AppCompatActivity() {
 
                 val result = newProblem.requestingUserSolving?.points
                 val solved = result != null && result > 0
-                if (solved) {
-                    itemView.solvedImage.visibility = View.VISIBLE
-                } else {
-                    itemView.solvedImage.visibility = View.GONE
-                }
+                itemView.solvedImage visibleIf solved
                 itemView onClick {
-                    GlobalScope.launch (Dispatchers.Main) {
+                    GlobalScope.launch(Dispatchers.Main) {
                         try {
-                            val requestBody = newProblem.solutionToSubmit()
-                            Log.i("ProblemViewHolder", "Request body: $requestBody")
-                            val solution = AuthModel(itemView.context).apiWrapper().solve(
-                                requestBody
-                            ).await()
-                            Log.i("ProblemViewHolder", solution.toString())
-                            refreshAction()
-                        } catch (e : Exception) {
+                            val requestBody = when (newProblem.solved()) {
+                                true -> newProblem.solutionToCancelSubmission()
+                                else -> newProblem.solutionToSubmit(isFlash = true)
+                            }
+                            itemView.solvedImage visibleIf requestBody.solved()
+                            problem.requestingUserSolving =
+                                    AuthModel(itemView.context).apiWrapper().solve(requestBody).await()
+                            updateItemAction(problem)
+                        } catch (e: Exception) {
                             Log.e("ProblemViewHolder", e.message)
                         }
                     }

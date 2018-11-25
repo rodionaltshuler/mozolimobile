@@ -3,7 +3,7 @@ package com.ottamotta.mozoli
 class Problem {
 
     val id: String? = null
-    val name: String? = null
+    val name: String = ""
     val photoId1: String? = null
     val photoId2: String? = null
     val photoId3: String? = null
@@ -22,10 +22,12 @@ class Problem {
     val isRequestingUserLikeIt: Boolean = false
     val eventId: String? = null
     val eventName: String? = null
-    val requestingUserSolving: Solution? = null
+    var requestingUserSolving: Solution? = null
     val gymId: String? = null
     val sector: Sector? = null
     val createdDate: String? = null
+
+    fun solved() = requestingUserSolving?.solved()?:false
 
     fun solutionToSubmit(isFlash: Boolean = true, isRedpoint: Boolean = false, attempts: Int? = null): Solution {
         val solution = this.requestingUserSolving ?: Solution()
@@ -34,6 +36,16 @@ class Problem {
             this.isFlash = isFlash
             this.isRedpoint = isRedpoint
             this.attemptsNumber = attempts
+        }
+    }
+
+    fun solutionToCancelSubmission(): Solution {
+        val solution = this.requestingUserSolving ?: Solution()
+        return solution.apply {
+            this.problemId = this@Problem.id
+            this.isFlash = false
+            this.isRedpoint = false
+            this.attemptsNumber = 0
         }
     }
 
