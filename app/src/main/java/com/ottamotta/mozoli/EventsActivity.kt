@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,7 +36,7 @@ class EventsActivity : AppCompatActivity() {
                     adapter = this@EventsActivity.adapter
                 }
 
-                adapter.events = (api getEventsByCity "1").await()
+                adapter.events = api getEventsByCity "1"
             }
         }
 
