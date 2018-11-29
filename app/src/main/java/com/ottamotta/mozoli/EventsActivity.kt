@@ -5,10 +5,10 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.ottamotta.mozoli.dto.Event
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_list.*
 import kotlinx.android.synthetic.main.event_list_item.view.*

@@ -9,11 +9,9 @@ import com.auth0.android.authentication.storage.CredentialsManager
 import com.auth0.android.authentication.storage.SharedPreferencesStorage
 import com.auth0.android.provider.WebAuthProvider
 import com.auth0.android.result.Credentials
-import com.fasterxml.jackson.databind.DeserializationFeature
 import com.ottamotta.mozoli.api.MozoliApi
 import com.ottamotta.mozoli.api.MozoliApiKtor
 import com.ottamotta.mozoli.config.ServerConfig
-import io.ktor.client.features.json.JacksonSerializer
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import sample.R
@@ -36,12 +34,9 @@ class MozoliModel(private val context: Context) {
 
     fun isLoggedIn() = authManager.hasValidCredentials()
 
-    val jsonSerializer = JacksonSerializer{
-        configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+    fun apiWrapper() : MozoliApi = MozoliApiKtor {
+        if (isLoggedIn()) getTokenIfLoggedIn().idToken else null
     }
-
-    fun apiWrapper() : MozoliApi = MozoliApiKtor(ServerConfig.SERVER_URL, jsonSerializer)
-        { if (isLoggedIn()) getTokenIfLoggedIn().idToken else null }
 
     fun authenticate(activity : Activity, actionAfterAuth: (() -> Unit)? = {}) {
 

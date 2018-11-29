@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import com.ottamotta.mozoli.dto.Rating
 import kotlinx.android.synthetic.main.activity_list.*
 import kotlinx.android.synthetic.main.rating_list_item.view.*
 import kotlinx.coroutines.Dispatchers

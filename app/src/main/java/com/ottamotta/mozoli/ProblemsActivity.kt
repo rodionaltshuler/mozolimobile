@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import com.ottamotta.mozoli.dto.Problem
 import kotlinx.android.synthetic.main.activity_list.*
 import kotlinx.android.synthetic.main.problem_list_item.view.*
 import kotlinx.coroutines.Dispatchers
@@ -112,7 +113,7 @@ class ProblemsActivity : AppCompatActivity() {
         }
 
         override fun getItemId(position: Int): Long {
-            return items[position].name!!.toLong()
+            return items[position].name.toLong()
         }
 
     }
