@@ -11,7 +11,6 @@ import com.auth0.android.provider.WebAuthProvider
 import com.auth0.android.result.Credentials
 import com.ottamotta.mozoli.api.MozoliApi
 import com.ottamotta.mozoli.api.MozoliApiKtor
-import com.ottamotta.mozoli.config.ServerConfig
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import sample.R
