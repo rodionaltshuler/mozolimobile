@@ -6,7 +6,7 @@ kotlin {
     targets {
         fromPreset(presets.jvm, 'android')
         // Change to `presets.iosArm64` to deploy the app to iPhone
-        fromPreset(presets.iosX64, 'ios') {
+        fromPreset(presets.iosX64, 'iOS') {
             compilations.main.outputKinds('FRAMEWORK')
         }
     }
@@ -42,7 +42,7 @@ kotlin {
                 implementation 'org.jetbrains.kotlin:kotlin-test-junit'
             }
         }
-        iosMain {
+        iOSMain {
             dependencies {
                 implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-native:$coroutines_version"
                 implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime-native:$serialization_version"
@@ -54,6 +54,26 @@ kotlin {
         }
     }
 }
+
+task packForXCode(type: Sync) {
+    final File frameworkDir = new File(buildDir, "xcode-frameworks")
+    final String mode = project.findProperty("XCODE_CONFIGURATION")?.toUpperCase() ?: 'DEBUG'
+
+    inputs.property "mode", mode
+    dependsOn kotlin.targets.iOS.compilations.main.linkTaskName("FRAMEWORK", mode)
+
+    from { kotlin.targets.iOS.compilations.main.getBinary("FRAMEWORK", mode).parentFile }
+    into frameworkDir
+
+    doLast {
+        new File(frameworkDir, 'gradlew').with {
+            text = "#!/bin/bash\nexport 'JAVA_HOME=${System.getProperty("java.home")}'\ncd '${rootProject.rootDir}'\n./gradlew \$@\n"
+            setExecutable(true)
+        }
+    }
+}
+
+tasks.build.dependsOn packForXCode
 
 // workaround for https://youtrack.jetbrains.com/issue/KT-27170
 configurations {

@@ -33,9 +33,9 @@ class MozoliModel(private val context: Context) {
 
     fun isLoggedIn() = authManager.hasValidCredentials()
 
-    fun apiWrapper() : MozoliApi = MozoliApiKtor {
+    fun apiWrapper() : MozoliApi = MozoliApiKtor(tokenProviderSuspend = {
         if (isLoggedIn()) getTokenIfLoggedIn().idToken else null
-    }
+    })
 
     fun authenticate(activity : Activity, actionAfterAuth: (() -> Unit)? = {}) {
 
