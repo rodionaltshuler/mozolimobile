@@ -3,6 +3,15 @@
 This project contains mobile clients for <b>mozoli</b> (http://mozo.li).<br><br>
 mozoli - it's about indoor climbing, bouldering and lead. You can discover gyms and events, track you scores and rating.
 
+### How to build iOS lib (framework)
+
+Run from the project root:
+```./gradlew build```
+
+...and look for binaries to be included in iOS project now here:
+ ```common/build/bin/ios/main```
+
+
 ### Primary project purpose
 
 Evaluate whether [#kotlin_native] is a viable solution for code sharing among native Android and iOS application. <br><br>
