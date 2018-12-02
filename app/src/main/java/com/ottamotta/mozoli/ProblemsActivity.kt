@@ -60,7 +60,7 @@ class ProblemsActivity : AppCompatActivity() {
             GlobalScope.launch(Dispatchers.Main) {
                 Log.d(TAG, "Authenticated - launching post-auth code")
                 val api = mozoliModel.apiWrapper()
-                adapter.setItems(api.getProblemsForEventWithSolutions(eventId))
+                adapter.setItems(api.getProblemsForEventWithSolutionsAsync(eventId))
             }
         }
     }
@@ -139,7 +139,7 @@ class ProblemsActivity : AppCompatActivity() {
                             }
                             itemView.solvedImage visibleIf requestBody.solved()
                             problem.requestingUserSolving =
-                                    MozoliModel(itemView.context).apiWrapper().solve(requestBody)
+                                    MozoliModel(itemView.context).apiWrapper().solveAsync(requestBody)
                             updateItemAction(problem)
                         } catch (e: Exception) {
                             Log.e("ProblemViewHolder", e.message)

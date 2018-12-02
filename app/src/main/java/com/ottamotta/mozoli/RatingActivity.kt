@@ -47,7 +47,7 @@ class RatingActivity : AppCompatActivity() {
 
 
         GlobalScope.launch(Dispatchers.Main) {
-            adapter.ratings = api.getRatingByEvent(eventId)
+            adapter.ratings = api.getRatingByEventAsync(eventId)
                 .sortedByDescending { it.score }
         }
 

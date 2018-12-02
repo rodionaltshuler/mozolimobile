@@ -36,7 +36,7 @@ class EventsActivity : AppCompatActivity() {
                     adapter = this@EventsActivity.adapter
                 }
 
-                adapter.events = api getEventsByCity "1"
+                adapter.events = api getEventsByCityAsync "1"
             }
         }
 
